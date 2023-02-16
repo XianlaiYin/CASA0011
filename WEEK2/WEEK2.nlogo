@@ -1,53 +1,104 @@
-globals [ q ]
-patches-own [ elevation ]
-turtles-own [ ]
+globals [ ]
+
+patches-own
+[
+  elevation
+  used?
+  turtle-heat-var
+]
+
+turtles-own [ start-patch ]
 
 to setup
+
   ca
+
+  elevations-from-file
+
+  let min-elevation min [elevation] of patches
+  let max-elevation max [elevation] of patches
 
   ask patches
   [
-   let elev1 100 - distancexy 30 30
-   let elev2 50 - distancexy 120 100
-
-   ifelse elev1 > elev2
-    [set elevation elev1]
-    [set elevation elev2]
-
-   set pcolor scale-color green elevation 0 100
+    set pcolor scale-color green elevation min-elevation (1.3 * max-elevation)
+    set used? false
   ]
 
-  crt 1
+  crt 50
   [
-  set size 2
-  setxy 85 95
-    pen-down
+    set color yellow
+    set size 2
+    setxy (110 + random 11) (110 + random 11)
+    set pen-mode pen-var
+    set start-patch patch-here
   ]
-
-  set q 0.2
 
   reset-ticks
 end
 
 to go
-  ask turtles [move]
+  ask turtles
+  [
+    set pen-mode pen-var
+    move
+    set used? true
+  ]
+
+
   tick
-  if ticks >= 1000 [stop]
+
+  if ticks >= 1000
+  [
+    let final-corridor-width corridor-width
+    output-type "Corridor Width: " output-type precision final-corridor-width 2
+    stop
+  ]
 end
 
-to move ; a turtle procedure
+to-report corridor-width
+  let num-patches-visited count patches with [used?]
+  let mean-distance-travelled mean [distance start-patch] of turtles
+  let corridor-width-var num-patches-visited / mean-distance-travelled
+  report corridor-width-var
+end
+
+to move
+  ;if elevation >= [elevation] of max-one-of neighbors [elevation]
+  ;[stop]
+
   ifelse random-float 1 < q
-  [ uphill elevation ]
-  [move-to one-of neighbors ]
+  [uphill elevation]
+  [move-to one-of neighbors]
 end
 
+to make-two-hills
+  ask patches
+  [
+    let elev1 100 - distancexy 30 30
+    let elev2 50 - distancexy 120 100
+    ifelse elev1 > elev2
+    [set elevation elev1 + random 10]
+    [set elevation elev2 + random 10]
+  ]
+end
 
+to elevations-from-file
+  file-open "ElevationData.txt"
+  while [not file-at-end?]
+  [
+  let next-X file-read
+  let next-Y file-read
+  let next-elevation file-read
+    ask patch next-X next-Y [set elevation next-elevation]
+  ]
+  file-close
+end
 @#$#@#$#@
 GRAPHICS-WINDOW
-210
-10
-668
-469
+287
+29
+745
+488
 -1
 -1
 3.0
@@ -103,6 +154,56 @@ NIL
 NIL
 NIL
 1
+
+SLIDER
+59
+241
+231
+274
+q
+q
+0
+1
+0.2
+0.01
+1
+NIL
+HORIZONTAL
+
+OUTPUT
+11
+390
+251
+444
+12
+
+CHOOSER
+69
+190
+207
+235
+pen-var
+pen-var
+"up" "down"
+1
+
+PLOT
+101
+548
+301
+698
+corridor width
+NIL
+NIL
+0.0
+10.0
+0.0
+10.0
+true
+false
+"" ""
+PENS
+"default" 1.0 0 -16777216 true "" "plot corridor-width"
 
 @#$#@#$#@
 # Butterfly Model ODD Description
