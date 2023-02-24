@@ -208,8 +208,12 @@ to-report time ;; new lines
   report ticks
 end
 
-to-report population ;; new lines
+to-report final-population ;; new lines
   report count turtles
+end
+
+to-report save-rate ;; new lines
+  report (final-population / initial-population)
 end
 
 ; Copyright 2009 Uri Wilensky.
@@ -393,10 +397,10 @@ PENS
 MONITOR
 10
 165
-105
+132
 214
-population
-population
+NIL
+final-population
 17
 1
 12
@@ -481,6 +485,17 @@ false
 "" ""
 PENS
 "default" 1.0 0 -13345367 true "" "plot (gini-index-reserve / count turtles) * 2"
+
+MONITOR
+155
+225
+227
+270
+NIL
+save-rate
+17
+1
+11
 
 @#$#@#$#@
 ## WHAT IS IT?
@@ -848,7 +863,8 @@ NetLogo 6.3.0
     <go>go</go>
     <timeLimit steps="2000"/>
     <exitCondition>stable? = true</exitCondition>
-    <metric>population</metric>
+    <metric>final-population</metric>
+    <metric>save-rate</metric>
     <metric>time</metric>
     <metric>gini-mean</metric>
     <metric>gini-variance</metric>

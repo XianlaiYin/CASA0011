@@ -217,10 +217,13 @@ to-report time ;; new lines
   report ticks
 end
 
-to-report population ;; new lines
+to-report final-population ;; new lines
   report count turtles
 end
 
+to-report save-rate ;; new lines
+  report (final-population / initial-population)
+end
 
 ; Copyright 2009 Uri Wilensky.
 ; See Info tab for full copyright and license.
@@ -463,7 +466,18 @@ MONITOR
 242
 295
 population
-population
+final-population
+17
+1
+11
+
+MONITOR
+15
+415
+87
+460
+NIL
+save-rate
 17
 1
 11
@@ -849,7 +863,8 @@ NetLogo 6.3.0
     <go>go</go>
     <timeLimit steps="2000"/>
     <exitCondition>stable? = true</exitCondition>
-    <metric>population</metric>
+    <metric>final-population</metric>
+    <metric>save-rate</metric>
     <metric>time</metric>
     <metric>gini-mean</metric>
     <metric>gini-variance</metric>
